@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Partnership Dashboard</title>
+
+    <!-- Prevent Search Engines -->
+    <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
+    <meta name="googlebot" content="noindex,nofollow">
+    <meta name="bingbot" content="noindex,nofollow">
+
+    <meta name="theme-color" content="#24374A">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Date Range Picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/table.css">
+</head>
+
+<body>
+
+<div id="app">
+
+    <!-- SIDEBAR -->
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main">
+
+        <!-- HEADER -->
+
+        <header class="header">
+
+            <div>
+
+                <h1>
+                    Circadia AU
+                </h1>
+
+                <p>
+                    Partnership Dashboard
+                </p>
+
+            </div>
+
+            <div class="sheet-config">
+
+                <input
+                    type="text"
+                    id="sheetUrl"
+                    placeholder="Paste Google Sheet URL">
+
+                <button id="saveSheetUrl">
+                    Save
+                </button>
+
+                <button id="refreshButton">
+                    Refresh Data
+                </button>
+
+                <button id="openOrdersButton">
+                    Open Orders
+                </button>
+
+            </div>
+
+        </header>
+
+        <!-- KPI CARDS -->
+        <section id="kpiContainer" class="kpi-grid">
+
+        </section>
+        
+
+        <!-- FILTERS -->
+
+        <section class="filters">
+
+            <div class="filter-row">
+
+                <!-- ======================================
+                    Date Range
+                ====================================== -->
+
+                <div class="filter-tooltip-wrapper">
+
+                    <input
+                        type="text"
+                        id="dateRange"
+                        placeholder="Select date range"
+                        readonly
+                    >
+
+                    <span class="tooltip">
+                        ⓘ
+                        <span class="tooltip-text">
+                            To use a custom date range, select the All Year from the Year filter.
+                            Date Range cannot be used together with Year or Quarter.
+                            Clear the date range to return to Quarter filtering.
+                        </span>
+                    </span>
+
+                </div>
+
+                <!-- ======================================
+                    Year
+                ====================================== -->
+
+                <div class="filter-tooltip-wrapper">
+
+                    <select id="yearFilter">
+                        <option value="">All Years</option>
+                    </select>
+
+                    <span class="tooltip">
+                        ⓘ
+                        <span class="tooltip-text">
+                            Select a Year first when using the Quarter filter.
+                            The Year is required for the selected Quarter to work correctly.
+                        </span>
+                    </span>
+
+                </div>
+
+                <!-- ======================================
+                    Quarter
+                ====================================== -->
+
+                <div class="filter-tooltip-wrapper">
+
+                    <select id="quarterFilter">
+                        <option value="">All Quarters</option>
+                    </select>
+
+                    <span class="tooltip">
+                        ⓘ
+                        <span class="tooltip-text">
+                            Select a Year first, then choose Q1, Q2, Q3, or Q4.
+                            Quarter reporting is based on the selected Year + Quarter.
+                        </span>
+                    </span>
+
+                </div>
+
+                <div class="filter-tooltip-wrapper">
+
+                    <select id="activeTierFilter">
+                        <option value="">All Tiers</option>
+                    </select>
+
+                    <span class="tooltip">
+                        ⓘ
+                        <span class="tooltip-text">
+                            Filters customers by their active loyalty tier shown in the Tier column.
+                        </span>
+                    </span>
+
+                </div>
+
+                <div class="filter-tooltip-wrapper">
+
+                    <select id="tierFilter">
+                        <option value="">All Running Tiers</option>
+                    </select>
+
+                    <span class="tooltip">
+                        ⓘ
+                        <span class="tooltip-text">
+                            Filters customers by their Running Tier calculated from Total Paid for the selected period.
+                        </span>
+                    </span>
+
+                </div>
+
+                <select id="tagFilter">
+                    <option value="">All Tags</option>
+                </select>
+
+                <select id="stateFilter">
+                    <option value="">All States</option>
+                </select>
+
+                <div class="filter-tooltip-wrapper">
+
+                    <select id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="upgrade">Upgrading</option>
+                        <option value="maintained">Maintained</option>
+                        <option value="downgrade">Downgrading</option>
+                    </select>
+
+                    <span class="tooltip">
+                        ⓘ
+                        <span class="tooltip-text">
+                            Filters customers by Status II based on their Previous Tier and Running Tier.
+                        </span>
+                    </span>
+
+                </div>
+
+                <div class="filter-tooltip-wrapper">
+
+                    <label class="checkbox">
+                        <input
+                            type="checkbox"
+                            id="showStatusColumn"
+                        >
+                        <span>Show Status</span>
+                    </label>
+
+                    <span class="tooltip">
+                        ⓘ
+                        <span class="tooltip-text">
+                            Compares the Tier column with Running Tier column.
+                            This helps identify accounts where the customer's recorded
+                            tier has not yet been updated to match their Total Paid.
+                            <br><br>
+                            <strong>Example:</strong> A new stockist may place an order
+                            before receiving their stockist tag. Their Tier may still show
+                            Member even after their Total Paid has reached $3,500 and their
+                            Running Tier is Bronze.
+                        </span>
+                    </span>
+
+                </div>
+
+                <label class="checkbox">
+
+                    <input
+                        type="checkbox"
+                        id="stockistOnly"
+                        checked>
+
+                    <span>Stockists Only</span>
+
+                </label>
+
+            </div>
+
+            <div class="filter-row search-row">
+
+                <input
+                    type="search"
+                    id="searchCustomer"
+                    placeholder="Search customer...">
+
+            </div>
+
+        </section>
+
+        <!-- ======================================
+            Tier Guide
+        ====================================== -->
+
+        <section class="tier-guide card">
+
+            <div class="tier-guide-title">
+                🏆 <strong>Tier Guide</strong>
+            </div>
+
+            <div id="tierGuideList" class="tier-guide-list">
+                <!-- Tier levels generated by JavaScript -->
+            </div>
+
+        </section>
+
+        <!-- CHART PLACEHOLDER -->
+
+        <section class="card">
+
+            <div class="section-header">
+
+                <h3>Revenue Overview</h3>
+
+                <button
+                    id="toggleCharts"
+                    class="toggle-button">
+
+                    Hide Charts
+
+                </button>
+
+            </div>
+
+            <div id="dashboardCharts">
+
+                <div class="chart-card">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+
+                <div class="chart-card">
+                    <canvas id="tierChart"></canvas>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- CUSTOMER TABLE -->
+
+        <section
+            id="customerSection"
+            class="table-card">
+
+            <div class="table-header">
+
+                <div>
+
+                    <h2>
+                        Partnership Customers
+                    </h2>
+
+                    <p>
+                        Customer performance for the selected period
+                    </p>
+
+                </div>
+
+                <div id="tableSummary">
+
+                </div>
+
+            </div>
+
+            <div class="table-wrapper">
+
+                <table id="customerTable">
+
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th data-sort="points">
+                                Points
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Current loyalty points.
+                                    </span>
+                                </span>
+                                <span class="sort-icon">↕</span>
+                            </th>
+                            <th>
+                                Tier
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Active loyalty tier for the current quarter.
+                                    </span>
+                                </span>
+                            </th>
+                            <th>
+                                Running Tier
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Customer's tier based on their Total Paid for the selected quarter or date range.
+                                    </span>
+                                </span>
+                            </th>
+                            <th>
+                                Previous Tier
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Customer's tier based on Total Paid during the previous quarter or previous date range.
+                                        <br><br>
+                                        <strong>Example:</strong> If Q3 is selected, Previous Tier is based on the customer's Total Paid in Q2.
+                                    </span>
+                                </span>
+                            </th>
+                            <th>
+                                Next Tier
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        The next partnership tier above the customer's Running Tier based on Total Paid for the selected period.
+                                    </span>
+                                </span>
+                            </th>
+                            <th id="statusColumn" data-sort="status">
+                                Status
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Compares "Tier" column with "Running Tier" column for the selected period.
+                                    </span>
+                                </span>
+                                <span class="sort-icon">↕</span>
+                            </th>
+                            <th data-sort="statusII">
+                                Status II
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Compares "Previous Tier" column with "Running Tier" column for the selected period.
+                                    </span>
+                                </span>
+                                <span class="sort-icon">↕</span>
+                            </th>
+                            <th data-sort="totalPaid">
+                                Total Paid
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Sum of paid transactions only.
+                                        Excludes payments made using Shopify Store Credit and Gift Cards.
+                                    </span>
+                                </span>
+                                <span class="sort-icon">↕</span>
+                            </th>
+
+                            <th data-sort="storeCredit">
+                                Store Credit
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Total amount paid using Shopify Store Credit.
+                                    </span>
+                                </span>
+                                <span class="sort-icon">↕</span>
+                            </th>
+
+                            <th data-sort="giftCard">
+                                Gift Card
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Total amount paid using Gift Cards.
+                                    </span>
+                                </span>
+                                <span class="sort-icon">↕</span>
+                            </th>
+
+                            <th data-sort="orderTotal">
+                                Order Total
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Sum of all order totals.
+                                    </span>
+                                </span>
+                                <span class="sort-icon">↕</span>
+                            </th>
+
+                            <th>
+                                AOV
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Average Order Value, calculated as Order Total ÷ Orders.
+                                    </span>
+                                </span>
+                            </th>
+
+                            <th>
+                                Spend to Upgrade
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Remaining spend required to reach the next partnership tier based on Total Paid.
+                                    </span>
+                                </span>
+                            </th>
+
+                            <th data-sort="orderCount">
+                                Orders
+                                <span class="tooltip">
+                                    ⓘ
+                                    <span class="tooltip-text">
+                                        Total number of orders placed by the customer.
+                                    </span>
+                                </span>
+                                <span class="sort-icon">↕</span>
+                            </th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="customerTableBody">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+        <!-- OPEN ORDERS TABLE -->
+
+        <section
+            id="openOrdersSection"
+            class="table-card hidden">
+
+            <div class="table-header">
+
+                <div>
+
+                    <h2>Open Orders</h2>
+
+                    <p>
+                        Orders requiring payment or fulfillment
+                        <span id="openOrdersCount"></span>
+                    </p>
+
+                </div>
+
+                <div class="open-orders-actions">
+
+                    <select id="openOrderValueFilter">
+                        <option value="">All Order Values</option>
+                        <option value="5000">Over $5,000</option>
+                    </select>
+
+                    <select id="newCustomerFilter">
+                        <option value="">All Customers</option>
+                        <option value="new">New Customers</option>
+                    </select>
+
+                    <button id="backToDashboard">
+                        ← Dashboard
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="table-wrapper">
+
+                <table id="openOrdersTable">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Order Name</th>
+                            <th>Customer ID</th>
+                            <th>Customer Email</th>
+                            <th data-open-sort="createdDate">
+                                Created Date
+                                <span class="sort-icon">↕</span>
+                            </th>
+                            <th data-open-sort="orderTotal">
+                                Order Total
+                                <span class="sort-icon">↕</span>
+                            </th>
+                            <th>Payment Status</th>
+                            <th>Fulfillment Status</th>
+                            <th>Customer State</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="openOrdersTableBody">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- JavaScript -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/tiers.js"></script>
+<script src="js/calculations.js"></script>
+<script src="js/filters.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/table.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/logger.js"></script>
+<script src="js/app.js"></script>
+
+
+<!-- ======================================
+     Help Center
+====================================== -->
+
+<div class="help-widget">
+
+    <button
+        id="helpButton"
+        class="help-button"
+        type="button"
+    >
+        <span>?</span>
+        <span>How It Works</span>
+    </button>
+
+    <div id="helpPanel" class="help-panel">
+
+        <div class="help-panel-header">
+
+            <div>
+                <strong>How It Works</strong>
+                <small>Quick guide to the dashboard</small>
+            </div>
+
+            <button
+                id="closeHelp"
+                class="help-close"
+                type="button"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div class="help-tabs">
+
+            <button
+                class="help-tab active"
+                data-help-tab="calculations"
+            >
+                💰 Calculations
+            </button>
+
+            <button
+                class="help-tab"
+                data-help-tab="filters"
+            >
+                📅 Filters
+            </button>
+
+            <button
+                class="help-tab"
+                data-help-tab="columns"
+            >
+                📊 Columns
+            </button>
+
+        </div>
+
+        <!-- Calculations -->
+
+        <div
+            class="help-content active"
+            data-help-content="calculations"
+        >
+
+            <h4>How Total Paid is calculated</h4>
+
+            <p>
+                Total Paid only includes payments from orders that were
+                <strong>created and paid within the selected period</strong>.
+            </p>
+
+            <div class="help-rule">
+                <div>✓</div>
+                <span>Order was created within the selected period</span>
+            </div>
+
+            <div class="help-rule">
+                <div>✓</div>
+                <span>Order was paid within the selected period</span>
+            </div>
+
+            <div class="help-rule">
+                <div>✕</div>
+                <span>Gift Card payments are excluded</span>
+            </div>
+
+            <div class="help-rule">
+                <div>✕</div>
+                <span>Store Credit payments are excluded</span>
+            </div>
+
+
+            <h4>Quarter Filter Example</h4>
+
+            <div class="help-example">
+
+                <strong>2026 Q2 selected</strong>
+
+                <p>
+                    Reporting period:
+                    <strong>April 1 – June 30, 2026</strong>
+                </p>
+
+                <p>
+                    Order created: <strong>June 30, 2026</strong><br>
+                    Order Total: <strong>$100</strong><br>
+                    Payment received: <strong>June 30, 2026</strong>
+                </p>
+
+                <div class="help-result">
+                    ✓ Included in 2026 Q2 Total Paid
+                </div>
+
+            </div>
+
+
+            <h4>Payment Outside the Quarter</h4>
+
+            <div class="help-example">
+
+                <strong>2026 Q2 selected</strong>
+
+                <p>
+                    Order created: <strong>June 30, 2026</strong><br>
+                    Order Total: <strong>$100</strong><br>
+                    Payment received: <strong>July 1, 2026</strong>
+                </p>
+
+                <div class="help-result">
+                    ✕ Not included in Q2<br>
+                    ✕ Not included in Q3
+                </div>
+
+            </div>
+
+            <p class="help-note">
+                The order must be both created and paid within the same
+                reporting quarter to be included.
+            </p>
+
+
+            <h4>Date Range Filter Example</h4>
+
+            <div class="help-example">
+
+                <strong>January 1–6, 2026 selected</strong>
+
+                <p>
+                    Reporting period:
+                    <strong>January 1 – January 6, 2026</strong>
+                </p>
+
+                <p>
+                    Order created: <strong>January 3, 2026</strong><br>
+                    Order Total: <strong>$100</strong><br>
+                    Payment received: <strong>January 5, 2026</strong>
+                </p>
+
+                <div class="help-result">
+                    ✓ Included in Total Paid
+                </div>
+
+            </div>
+
+            <div class="help-example">
+
+                <p>
+                    Order created: <strong>January 3, 2026</strong><br>
+                    Order Total: <strong>$100</strong><br>
+                    Payment received: <strong>January 7, 2026</strong>
+                </p>
+
+                <div class="help-result">
+                    ✕ Not included in Total Paid
+                </div>
+
+            </div>
+
+            <p class="help-note">
+                For a custom date range, both the order creation date and
+                payment date must fall within the selected dates.
+            </p>
+
+        </div>
+
+        <!-- Filters -->
+
+        <div
+            class="help-content"
+            data-help-content="filters"
+        >
+
+            <h4>Year + Quarter</h4>
+
+            <p>
+                Select a <strong>Year</strong> first, then select
+                <strong>Q1, Q2, Q3, or Q4</strong>.
+            </p>
+
+            <p>
+                The Year is required for the selected Quarter to
+                work correctly.
+            </p>
+
+            <h4>Custom Date Range</h4>
+
+            <p>
+                To use a custom date range, first clear the
+                <strong>Year</strong> selection.
+            </p>
+
+            <p>
+                Date Range cannot be used together with the
+                Year + Quarter filters.
+            </p>
+
+            <h4>Switching Between Filters</h4>
+
+            <div class="help-step">
+                <strong>Quarter → Date Range</strong>
+                <span>Clear Year, then select your date range.</span>
+            </div>
+
+            <div class="help-step">
+                <strong>Date Range → Quarter</strong>
+                <span>Clear the date range, then select Year + Quarter.</span>
+            </div>
+
+            <h4>Date Range Example</h4>
+
+            <div class="help-example">
+
+                <strong>January 1–6 selected</strong>
+
+                <p>
+                    Only orders that were
+                    <strong>created AND paid between January 1 and January 6</strong>
+                    are included.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Columns -->
+
+        <div
+            class="help-content"
+            data-help-content="columns"
+        >
+
+            <h4>Tier</h4>
+
+            <p>
+                The customer's active loyalty tier for the current quarter.
+            </p>
+
+            <h4>Running Tier</h4>
+
+            <p>
+                The tier calculated from the customer's
+                <strong>Total Paid</strong> for the selected period.
+            </p>
+
+            <h4>Previous Tier</h4>
+
+            <p>
+                The customer's tier based on Total Paid during the
+                previous reporting period.
+            </p>
+
+            <h4>Status II</h4>
+
+            <p>
+                Compares the customer's Previous Tier with their
+                Running Tier to determine whether they are
+                <strong>Upgrading, Maintained, or Downgrading</strong>.
+            </p>
+
+            <h4>Status</h4>
+
+            <p>
+                Compares the customer's <strong>Present Tier (Tier column)</strong> with the
+                <strong>Running Tier column</strong> for the selected period.
+            </p>
+
+            <h4>Points</h4>
+
+            <p>
+                Displays the customer's current loyalty points.
+            </p>
+
+            <h4>AOV</h4>
+
+            <p>
+                Average Order Value, calculated as
+                <strong>Order Total ÷ Orders</strong>.
+            </p>
+
+            <h4>Spend to Upgrade</h4>
+
+            <p>
+                The remaining amount required to reach the next
+                partnership tier based on Total Paid.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
